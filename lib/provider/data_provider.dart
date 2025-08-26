@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import 'package:product_explorer/domain/base/product.dart' as model;
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;

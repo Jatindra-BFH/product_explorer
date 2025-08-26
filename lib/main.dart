@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:product_explorer/presentation/main_screen.dart';
 import 'package:product_explorer/provider/auth_provider.dart';
 import 'package:product_explorer/provider/data_provider.dart';
@@ -10,16 +9,12 @@ import 'package:provider/provider.dart';
 
 void main() async{
   HttpOverrides.global = MyHttpOverrides();
-  //WidgetsFlutterBinding.ensureInitialized();
-  //await Hive.initFlutter();
-  //Hive.registerAdapter(ProductAdapter());
-  //await Hive.openBox<Product>('product_explorer');
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..checkAuthStatus()),
         ChangeNotifierProvider(create: (_) => DataProvider()..retrieveProducts()),
-        ChangeNotifierProvider(create: (_) => LayoutUtilitiesProvider()..gridSize)
+        ChangeNotifierProvider(create: (_) => LayoutUtilitiesProvider())
       ],
       child: MyApp(),
     ),
