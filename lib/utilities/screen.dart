@@ -1,5 +1,5 @@
 enum Screen{
-  Home,
-  Product_Explorer,
-  Settings
+  home,
+  productExplorer,
+  settings
 }

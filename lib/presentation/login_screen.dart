@@ -1,6 +1,6 @@
 import 'package:product_explorer/domain/base/login_exception.dart';
 import 'package:product_explorer/domain/request_models/login_request.dart';
-import 'package:product_explorer/presentation/home_screen.dart';
+import 'package:product_explorer/presentation/main_screen.dart';
 import 'package:product_explorer/presentation/widgets/login_error_bottom_sheet.dart';
 import 'package:product_explorer/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool passwordVisibility = false;
+  bool isLoading = false;
   @override
   void dispose() {
     _emailController.dispose();
@@ -30,15 +31,22 @@ class _LoginScreenState extends State<LoginScreen> {
       password: _passwordController.text,
     );
     try {
+      setState(() {
+        isLoading = true;
+      });
       final authProvider = context.read<AuthProvider>();
       await authProvider.login(request);
       if(authProvider.isAuthenticated){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainScreen()));
       }
     } on LoginException catch (exception) {
       _showError(exception.toString());
     } on Exception catch (exception) {
       _showError("An unexpected error occurred: ${exception.toString()}");
+    }finally{
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 }
@@ -58,18 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: const Color.fromARGB(255, 200, 241, 253),
+      backgroundColor: const Color.fromARGB(255, 200, 241, 253),
       body: Center(        
         child: Container(
           padding: const EdgeInsets.all(40),
-          decoration: BoxDecoration(
-            border: Border(right: BorderSide()),
-            borderRadius: BorderRadius.circular(20),
-            color: const Color.fromARGB(255, 202, 237, 255),
-          ),
           child: SizedBox(
             height: 600,
-            width: 300,
+            width: 400,
             child: Padding(
               
               padding: EdgeInsets.zero,
@@ -78,9 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.lock),
-                    const Text("Login", style: TextStyle(fontSize: 24)),
-                    const SizedBox(height: 100),
+                    const Icon(Icons.lock, size: 50,),
+                    const Text("Login", style: TextStyle(fontSize: 35)),
+                    const SizedBox(height: 80),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -98,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !passwordVisibility,
@@ -117,18 +120,29 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
                     SizedBox(
                       height:45,
                       width: 100,
                       child: ElevatedButton(
-                        onPressed: _login,
-                        child: const Text("Login"),
+                        onPressed: isLoading ? null : _login,
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 2.0,
+                                ),
+                              )
+                            : const Text("Login"),
                       ),
                     ),
                     const SizedBox(height: 20),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _showError("Service unavailable");
+                      },
                       child: const Text("Forgot Password?"),
                     ),
                   ],

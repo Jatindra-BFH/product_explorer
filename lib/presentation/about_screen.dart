@@ -11,8 +11,7 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        child: Column(
+      child: Column(
           children: [
             SizedBox(height: 30),
             Container(
@@ -30,7 +29,6 @@ class _AboutScreenState extends State<AboutScreen> {
             Text('+91 8637250822'),
           ],
         ),
-      )
     );
   }
 }

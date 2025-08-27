@@ -22,27 +22,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   @override
-  void dispose() {
-    _gridSizeController.dispose();
-    super.dispose();
-  }
-
-  void _updateGridSizeFromTextField(LayoutUtilitiesProvider provider) {
-    final input = _gridSizeController.text;
-    final parsed = int.tryParse(input);
-    if (parsed != null && parsed > 0) {
-      provider.setGridSize(parsed);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Grid size updated to $parsed')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid positive number')),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<LayoutUtilitiesProvider>(context);
 
@@ -53,7 +32,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          /// Layout Type
           ListTile(
             title: const Text("Layout Type"),
             subtitle: Row(
@@ -73,8 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Divider(),
-
-          /// Grid Size Controls
           ListTile(
             title: const Text("Grid Size"),
             subtitle: Row(
@@ -89,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 SizedBox(
-                  width: 60,
+                  width: 10,
                   child: TextField(
                     controller: _gridSizeController,
                     keyboardType: TextInputType.number,
@@ -103,17 +79,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _gridSizeController.text = provider.gridSize.toString();
                   },
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => _updateGridSizeFromTextField(provider),
-                  child: const Text("Save"),
-                ),
               ],
             ),
           ),
           const Divider(),
-
-          /// Text Size Slider
           ListTile(
             title: const Text("Text Size"),
             subtitle: Column(
@@ -125,22 +94,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   max: 40,
                   divisions: 30,
                   label: provider.textSize.toString(),
-                  onChanged: (val) => provider.setTextSize(val.toInt()),
+                  onChanged: (val) => provider.setTextSize(val),
                 ),
                 Text("Current: ${provider.textSize}", style: TextStyle(fontSize: provider.textSize.toDouble())),
               ],
             ),
           ),
           const Divider(),
-
-          /// Font Theme Dropdown
           ListTile(
             title: const Text("Font Theme"),
             subtitle: DropdownButton<String>(
-              value: _getCurrentFont(provider),
+              value: "Merriweather",
               onChanged: (String? newFont) {
                 if (newFont != null) {
-                  provider.setTextTheme(_getFontTheme(newFont));
+                  provider.setTextStyle(_getFontStyle(newFont));
                 }
               },
               items: const [
@@ -155,21 +122,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _getCurrentFont(LayoutUtilitiesProvider provider) {
-    final currentFont = provider.textTheme.bodyMedium?.fontFamily?.toLowerCase() ?? "";
-    if (currentFont.contains("roboto")) return "Roboto";
-    if (currentFont.contains("lobster")) return "Lobster";
-    return "Merriweather"; // default
-  }
-
-  TextTheme _getFontTheme(String fontName) {
+  TextStyle _getFontStyle(String fontName) {
     switch (fontName) {
       case "Roboto":
-        return GoogleFonts.robotoTextTheme();
+        return GoogleFonts.roboto();
       case "Lobster":
-        return GoogleFonts.lobsterTextTheme();
+        return GoogleFonts.lobster();
       default:
-        return GoogleFonts.merriweatherTextTheme();
+        return GoogleFonts.merriweather();
     }
   }
 }

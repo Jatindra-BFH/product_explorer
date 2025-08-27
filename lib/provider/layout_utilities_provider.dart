@@ -5,12 +5,12 @@ import 'package:product_explorer/utilities/layout_type.dart';
 class LayoutUtilitiesProvider extends ChangeNotifier{
   LayoutType _layoutType = LayoutType.grid;
   LayoutType get layoutType => _layoutType;
-  TextTheme _textTheme = GoogleFonts.merriweatherTextTheme();
-  TextTheme get textTheme => _textTheme;
-  int _gridSize = 8;
+  TextStyle _textStyle = GoogleFonts.merriweather();
+  TextStyle get textStyle => _textStyle;
+  int _gridSize = 6;
   int get gridSize => _gridSize;
-  int _textSize = 20;
-  int get textSize => _textSize;
+  double _textSize = 12.5;
+  double get textSize => _textSize;
 
   void setGridSize(int? newGridSize){
     if(newGridSize==null){ 
@@ -25,14 +25,11 @@ class LayoutUtilitiesProvider extends ChangeNotifier{
     _layoutType = layoutType;
     notifyListeners();
   }
-  void setTextTheme(TextTheme textTheme){
-    _textTheme = textTheme;
+  void setTextStyle(TextStyle textStyle){
+    _textStyle = textStyle;
     notifyListeners();
   }
-  void setColorScheme(ColorScheme _colorScheme){
-
-  }
-  void setTextSize(int textSize){
+  void setTextSize(double textSize){
     _textSize = textSize;
     notifyListeners();
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:product_explorer/presentation/main_screen.dart';
 
 import '../utilities/screen.dart';
-import 'main_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
               textStyle: const TextStyle(fontSize: 18),
             ),
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> MainScreen(currentScreen: Screen.Product_Explorer,)));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> MainScreen(currentScreen: Screen.productExplorer,)));
             },
           ),
         ],

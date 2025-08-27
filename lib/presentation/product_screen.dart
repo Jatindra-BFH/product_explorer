@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:product_explorer/domain/base/product.dart';
+import 'package:product_explorer/domain/data_models/product.dart';
+import 'package:product_explorer/provider/layout_utilities_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
   final Product product;
@@ -12,6 +14,7 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
+    final layoutUtilitiesProvider = Provider.of<LayoutUtilitiesProvider>(context);
     final product = widget.product;
     return Scaffold(
       appBar: AppBar(
@@ -104,19 +107,19 @@ class _ProductScreenState extends State<ProductScreen> {
                   const SizedBox(height: 16),
                   Text(
                     product.description,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: layoutUtilitiesProvider.textSize, fontFamily: layoutUtilitiesProvider.textStyle.fontFamily),
                   ),
                   const SizedBox(height: 24),
 
                   if (product.category != null) ...[
                     Text(
                       "Category",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontFamily: layoutUtilitiesProvider.textStyle.fontFamily, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       product.category!,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      style: TextStyle(fontSize: layoutUtilitiesProvider.textSize, fontFamily: layoutUtilitiesProvider.textStyle.fontFamily, fontWeight: FontWeight.bold, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -175,10 +178,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                     const SizedBox(height: 24),
                   ],
-                ],
-              ),
-            ),
-            if (product.images != null && product.images!.isNotEmpty)
+                  if (product.images != null && product.images!.isNotEmpty)
               Text(
                 "Images",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -201,7 +201,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               )
               ),
-
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
           ],
         ),

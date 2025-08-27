@@ -11,7 +11,7 @@ import 'login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final Screen currentScreen;
-  MainScreen({super.key, this.currentScreen = Screen.Home});
+  const MainScreen({super.key, this.currentScreen = Screen.home});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -114,10 +114,10 @@ class _MainScreenState extends State<MainScreen> {
             // Logout at the bottom
             Center(
                 child: Tooltip(
-                    child: IconButton(onPressed: (){
+                  message: 'Logout',
+                  child: IconButton(onPressed: (){
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>LoginScreen()));
                     }, icon: Icon(Icons.logout)),
-                  message: 'Logout',
               )
             )
           ],

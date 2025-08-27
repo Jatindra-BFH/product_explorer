@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:product_explorer/presentation/product_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../domain/base/product.dart';
+import '../domain/data_models/product.dart';
 import '../provider/data_provider.dart';
 import '../provider/layout_utilities_provider.dart';
 import '../utilities/layout_type.dart';
 
 class ProductExplorerScreen extends StatefulWidget {
-  final String title = "Product Explorer";
   const ProductExplorerScreen({super.key});
 
   @override
@@ -18,7 +17,7 @@ class ProductExplorerScreen extends StatefulWidget {
 class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  Widget _buildProductGridItem(BuildContext context, Product product) {
+  Widget _buildProductGridItem(BuildContext context, Product product, LayoutUtilitiesProvider provider) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -48,6 +47,8 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize : provider.textSize, fontFamily: provider.textStyle.fontFamily, fontStyle: provider.textStyle.fontStyle),
+                
               ),
             ),
             Padding(
@@ -67,7 +68,7 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
     );
   }
 
-  Widget _buildProductListItem(BuildContext context, Product product) {
+  Widget _buildProductListItem(BuildContext context, Product product, LayoutUtilitiesProvider provider) {
     return ListTile(
       onTap: () {
         Navigator.push(
@@ -89,6 +90,7 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
         product.title,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize : provider.textSize, fontFamily: provider.textStyle.fontFamily, fontStyle: provider.textStyle.fontStyle),
       ),
       subtitle: Text(
         '\$${product.price.toStringAsFixed(2)}',
@@ -110,42 +112,53 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
         : products
         .where((product) => product.title.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
-    return Container(
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Search products...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {
-                          _searchQuery = '';
-                        });
-                      },
-                    )
-                        : null,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            Row( 
+              children: [
+                Align(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
+                  width: 400,
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search products...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                          : null,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    ),
                   ),
                 ),
+              ), 
+                SizedBox(width: 20),
+                IconButton(onPressed: (){
+                  layoutUtilitiesProvider.layoutType==LayoutType.grid ? 
+                  layoutUtilitiesProvider.setLayoutType(LayoutType.list)
+                  : layoutUtilitiesProvider.setLayoutType(LayoutType.grid);
+                }, 
+                  icon: layoutUtilitiesProvider.layoutType==LayoutType.grid ? Icon(Icons.list):Icon(Icons.grid_on))
+              ]
               ),
-            ),
+            
             const SizedBox(height: 10),
 
             Expanded(
@@ -167,7 +180,7 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredProducts[index];
-                  return _buildProductGridItem(context, product);
+                  return _buildProductGridItem(context, product, layoutUtilitiesProvider);
                 },
               )
                   : ListView.separated(
@@ -176,14 +189,13 @@ class _ProductExplorerScreenState extends State<ProductExplorerScreen> {
                 separatorBuilder: (_, __) => const Divider(height: 10),
                 itemBuilder: (context, index) {
                   final product = filteredProducts[index];
-                  return _buildProductListItem(context, product);
+                  return _buildProductListItem(context, product, layoutUtilitiesProvider);
                 },
               )
 
             ),
-          ],
+        ]
         ),
-      ),
     );
   }
 }
