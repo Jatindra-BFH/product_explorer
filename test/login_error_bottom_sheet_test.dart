@@ -32,6 +32,7 @@ void main() {
     await tester.tap(find.text('Open Error'));
     await tester.pumpAndSettle();
 
+    expect(find.byType(LoginErrorBottomSheet), findsOneWidget);
     expect(find.byIcon(Icons.error), findsOneWidget);
     expect(find.text(testMessage), findsOneWidget);
     expect(find.text('Close'), findsOneWidget);
