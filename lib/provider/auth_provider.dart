@@ -16,7 +16,7 @@ class AuthProvider with ChangeNotifier {
     final response = await http.post(Uri.parse("https://api.escuelajs.co/api/v1/auth/login"), body: loginRequest.toJson(),);
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      box.put('access_token', User(accessToken: data['access_token'], refreshToken: data['refresh_token']));
+      box.put('currentUser', User(accessToken: data['access_token'], refreshToken: data['refresh_token']));
       _isAuthenticated = true;
       _email = loginRequest.email;
       notifyListeners();
@@ -33,7 +33,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    box.delete('access_token');
+    box.delete('currentUser');
     _isAuthenticated = false;
     notifyListeners();
   }
