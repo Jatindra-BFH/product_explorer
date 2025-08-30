@@ -11,7 +11,9 @@ class AuthProvider with ChangeNotifier {
   String get email => _email;
   bool _isAuthenticated = false;
   bool get isAuthenticated => _isAuthenticated;
-  final box = Hive.box<User>('user');
+  final Box<User> box;
+  final http.Client httpClient;
+  AuthProvider({ required this.box, required this.httpClient});
   Future<void> login(LoginRequest loginRequest) async {
     final response = await http.post(Uri.parse("https://api.escuelajs.co/api/v1/auth/login"), body: loginRequest.toJson(),);
     if (response.statusCode == 201) {

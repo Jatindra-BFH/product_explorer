@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:http/http.dart' as http;
 import 'package:product_explorer/domain/data_models/product.dart';
 import 'package:product_explorer/domain/data_models/products.dart';
 import 'package:product_explorer/domain/data_models/user.dart';
@@ -17,14 +18,16 @@ void main() async{
    Hive.registerAdapter(ProductsAdapter());
    Hive.registerAdapter(ProductAdapter());
    Hive.registerAdapter(UserAdapter());
-   await Hive.openBox<Products>('product_explorer');  
-   await Hive.openBox<User>('user');  
+   var product_explorer_box = await Hive.openBox<Products>('product_explorer');  
+   var userBox = await Hive.openBox<User>('user');  
   HttpOverrides.global = MyHttpOverrides();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()..checkAuthStatus()),
-        ChangeNotifierProvider(create: (_) => DataProvider()..retrieveProducts()),
+        Provider<http.Client>(create: (_) => http.Client(), dispose: (_, client)=> client.close()),
+        ChangeNotifierProvider(create: (context) => AuthProvider(box: userBox,
+            httpClient: context.read<http.Client>(),)..checkAuthStatus()),
+        ChangeNotifierProvider(create: (context) => DataProvider(box: product_explorer_box, httpClient: context.read<http.Client>())..retrieveProducts()),
         ChangeNotifierProvider(create: (_) => LayoutUtilitiesProvider())
       ],
       child: MyApp(),

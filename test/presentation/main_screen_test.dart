@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:http/src/client.dart';
 import 'package:product_explorer/domain/data_models/product.dart';
 import 'package:product_explorer/domain/data_models/products.dart';
 import 'package:product_explorer/domain/data_models/user.dart';
@@ -16,13 +17,12 @@ import 'package:product_explorer/provider/data_provider.dart';
 import 'package:product_explorer/provider/layout_utilities_provider.dart';
 import 'package:product_explorer/utilities/layout_type.dart';
 import 'package:provider/provider.dart';
+
+import '../mocks/mocks.mocks.dart';
 class FakeAuthProvider extends ChangeNotifier implements AuthProvider {
   String _email = 'test@example.com';
   @override
   String get email => _email;
-
-  @override
-  Box<User> get box => Hive.box('user');
 
   @override
   Future<void> checkAuthStatus() async{
@@ -40,6 +40,12 @@ class FakeAuthProvider extends ChangeNotifier implements AuthProvider {
   Future<void> logout() async{
     
   }
+
+  @override
+  Box<User> get box => MockBox();
+
+  @override
+  Client get httpClient => throw UnimplementedError();
 }
 class FakeDataProvider extends ChangeNotifier implements DataProvider{
   @override
@@ -63,6 +69,10 @@ class FakeDataProvider extends ChangeNotifier implements DataProvider{
   @override
   void storeProductsInHive(List<Product> products) {
   }
+  
+  @override
+  // TODO: implement httpClient
+  Client get httpClient => throw UnimplementedError();
 
 }
 class FakeLayoutUtilitiesProvider extends ChangeNotifier implements LayoutUtilitiesProvider{

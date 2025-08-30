@@ -10,13 +10,15 @@ class DataProvider with ChangeNotifier{
   List<model.Product> get products => _products;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-  final box = Hive.box<Products>('product_explorer');
+  final Box<Products> box;
+  final http.Client httpClient;
+  DataProvider({required this.box, required this.httpClient});
   void storeProductsInHive(List<Product> products) => box.put('products', Products(products));
   Future<void> retrieveProductsFromHive() async => _products = box.get('products')!.products;
   
   Future<void> retrieveProducts() async {
     _isLoading = true;
-    final response = await http.get(Uri.parse("https://dummyjson.com/products"));
+    final response = await httpClient.get(Uri.parse("https://dummyjson.com/products"));
     if (response.statusCode == 200) {
       List<dynamic> jsonList = jsonDecode(response.body)['products'];
       storeProductsInHive(jsonList.map((json) => Product.fromJson(json)).toList());
